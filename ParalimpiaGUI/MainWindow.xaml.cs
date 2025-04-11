@@ -50,16 +50,25 @@ namespace ParalimpiaGUI
 
         private void eremtablazat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            index = eremtablazat.SelectedIndex;
+            var selected = eremtablazat.SelectedItem as Paralimpia;
+            if (selected == null) return;
+
+            evLabel.Content = selected.Ev;
+            aranyTextbox.Text = selected.Arany.ToString();
+            ezustTextbox.Text = selected.Ezust.ToString();
+            bronzTextbox.Text = selected.Bronz.ToString();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            using StreamWriter sw = new(@"..\..\..\src\javaslat.txt", true);
-
-            MessageBox.Show("Valóban javaslatot tesz a(z) #### évi paralimpia éremszámára?", "Megerősítés", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            sw.WriteLine($"{DateTime.Now}\tId:{index}\tÉrmek:\t{aranyTextbox.Text}\t{ezustTextbox.Text}\t{bronzTextbox.Text}");
+            if (evLabel.Content.ToString() == "####") return;
+            var selected = eremtablazat.SelectedItem as Paralimpia;
+            var res = MessageBox.Show($"Valóban javaslatot tesz a(z) {selected.Ev}. évi paralimpia éremszámaira?", "Megerősítés", MessageBoxButton.YesNo);
+            if (res == MessageBoxResult.Yes)
+            {
+                using var sw = new StreamWriter("../../../src/javaslat.txt", true, Encoding.UTF8);
+                sw.WriteLine($"{DateTime.Now}\tId:{selected.Id}\tÉrmék:\t{aranyTextbox.Text}\t{ezustTextbox.Text}\t{bronzTextbox.Text}");
+            }
         }
     }
 }
